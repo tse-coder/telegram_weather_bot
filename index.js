@@ -88,3 +88,12 @@ bot
   .then(() => console.log("Bot is running"))
   .catch((err) => console.error("Failed to launch bot:", err));
 
+// Graceful stop
+process.once("SIGINT", () => {
+  console.log("Received SIGINT, stopping bot...");
+  bot.stop("SIGINT");
+});
+process.once("SIGTERM", () => {
+  console.log("Received SIGTERM, stopping bot...");
+  bot.stop("SIGTERM");
+});
