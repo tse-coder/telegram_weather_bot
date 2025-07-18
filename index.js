@@ -84,11 +84,27 @@ bot.on("text", (ctx) => {
 bot.command("quit", (ctx) => {
   ctx.reply("👋 <b>You have left the chat.</b>", { parse_mode: "HTML" });
 });
-bot
-  .launch()
-  .then(() => console.log("Bot is running"))
-  .catch((err) => console.error("Failed to launch bot:", err));
 
+bot.catch((err, ctx) => {
+  console.error(`Bot Error for ${ctx.updateType}`, err);
+});
+//express server for health check
+const app = express();
+app.get("/", (req, res) => {
+  res.send("Telegram Weather Bot is running");
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Express server is running on port ${PORT}`);
+});
+(async () => {
+  try {
+    await bot.launch();
+    console.log("Bot is running");
+  } catch (error) {
+    console.error("Failed to launch bot:", error);
+  }
+})();
 // Graceful stop
 process.once("SIGINT", () => {
   console.log("Received SIGINT, stopping bot...");
@@ -97,13 +113,4 @@ process.once("SIGINT", () => {
 process.once("SIGTERM", () => {
   console.log("Received SIGTERM, stopping bot...");
   bot.stop("SIGTERM");
-});
-
-const app = express();
-app.get("/", (req, res) => {
-  res.send("Telegram Weather Bot is running");
-});
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Express server is running on port ${PORT}`);
 });
