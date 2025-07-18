@@ -1,4 +1,5 @@
 import { Telegraf } from "telegraf";
+import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -96,4 +97,13 @@ process.once("SIGINT", () => {
 process.once("SIGTERM", () => {
   console.log("Received SIGTERM, stopping bot...");
   bot.stop("SIGTERM");
+});
+
+const app = express();
+app.get("/", (req, res) => {
+  res.send("Telegram Weather Bot is running");
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Express server is running on port ${PORT}`);
 });
